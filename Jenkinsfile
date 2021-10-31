@@ -30,24 +30,24 @@ pipeline {
         }
     }
     
-    stage('Blazemeter') {
+ stage('Selenium') {
          steps{
            script {
             dir ("/root/selenium") {
             echo "running Tests"
              
              try {
-              echo "ensure any prev running slow UC is shut. ignore any error due to this"
+              echo "ensure any prev running slow UC is shut. Ignore any error due to this"
               sh "kubectl delete -f selenium-standalone-slow.yml -n selenium"
              } catch (err) {
-                //ignore
+                //Ignore
              }
              sh "kubectl create -f selenium-standalone-slow.yml -n selenium"
              sleep(time:5,unit:"SECONDS")
              
             loadGeneratorName = env.STAGE_NAME;
             loadGeneratorStartTime = System.currentTimeMillis();
-            blazeMeterTest credentialsId:'aa2b41eb-23f3-4045-afe5-374a0b28d202',
+          /*  blazeMeterTest credentialsId:'aa2b41eb-23f3-4045-afe5-374a0b28d202',
             serverUrl:'https://blazemeter.ca.com',
             //testId:'6518001',
             testId: '8556570',
@@ -57,6 +57,9 @@ pipeline {
             junitPath:'',
             getJtl:false,
             getJunit:false
+            */
+            SLEEP_TIME = Math.abs( new Random().nextInt() % (200 - 180) ) + 180;
+            sh "sleep $SLEEP_TIME"
             loadGeneratorEndTime = System.currentTimeMillis();
 
                          map = [jenkinsPluginName: "CAAPM"];
@@ -64,7 +67,7 @@ pipeline {
            sleep(time:10,unit:"SECONDS") 
              
              
-             echo "Done Blazemeter Test"
+             echo "Done Selenium Test"
          } 
         }
       }
